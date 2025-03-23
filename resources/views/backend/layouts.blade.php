@@ -40,6 +40,8 @@
     <!-- metarial icon css -->
     <link rel="stylesheet" href="{{ asset('assets/vendors/material_icon/material-icons.css') }}" />
 
+    @stack('backend_css')
+
     <!-- menu css  -->
     <link rel="stylesheet" href="{{ asset('assets/css/metisMenu.css') }}">
     <!-- style CSS -->
@@ -80,10 +82,10 @@
                     <div class="icon_menu">
                         <img src="{{ asset('assets/img/menu-icon/2.svg') }} " alt="">
                     </div>
-                    <span>Apps</span>
+                    <span>Category</span>
                 </a>
                 <ul>
-                    <li><a href="editor.html">editor</a></li>
+                    <li><a href="{{ route('category.index') }}">Add new</a></li>
                     <li><a href="mail_box.html">Mail Box</a></li>
                     <li><a href="chat.html">Chat</a></li>
                     <li><a href="faq.html">FAQ</a></li>
@@ -162,7 +164,7 @@
                                     </button>
                                 </form>
                             </div>
-                            <span class="f_s_14 f_w_400 ml_25 white_text text_white">Apps</span>
+                            <span class="f_s_14 f_w_400 ml_25 white_text text_white"></span>
                         </div>
                         <div class="header_right d-flex justify-content-between align-items-center">
                             <div class="header_notification_warp d-flex align-items-center">
@@ -487,6 +489,9 @@
 <script src="{{ asset('assets/vendors/chart_am/kelly.js') }}"></script>
 <script src="{{ asset('assets/vendors/chart_am/chart-custom.js') }}"></script>
 <script src="{{ asset('assets/js/dashboard_init.js') }}"></script>
+
+@stack('backend_js')
+
 <script src="{{ asset('assets/js/custom.js') }}"></script>
 
 
