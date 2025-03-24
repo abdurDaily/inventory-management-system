@@ -11,16 +11,48 @@ class CategoryController extends Controller
     /**CATEGORY INDEX */
     public function categoryIndex()
     {
-        return view('backend.categorys.category');
+        $sub_categories = Category::select('id', 'category_name')->get();
+        return view('backend.categorys.category',compact('sub_categories'));
     }
 
 
-    /**STORE CAREGORY */
+    /** STORE CATEGORY */
     public function categoryStore(Request $request)
     {
-        $category =  new Category();
+        $request->validate([
+            'category_name' => 'required|string|max:255|unique:categories,category_name',
+        ]);
+
+        // Create a new category
+        $category = new Category();
         $category->category_name = $request->category_name;
         $category->save();
-        return back();
+
+        // Return JSON response for AJAX OR Redirect for normal form submission
+        if ($request->ajax()) {
+            return response()->json(
+                [
+                    'success' => true,
+                    'message' => 'Category inserted successfully!'
+                ]
+            );
+        }
+
+        // return back()->with('success', 'Category inserted successfully!');
+    }
+
+    /**SUB CATEGORY  STORE*/
+    public function subCategoryStore(Request $request){
+        $request->validate([
+            'foreign_id' => 'required',
+            'sub_category' => 'required'
+        ]);
+
+
+        $sub_category = new Category();
+        $sub_category->foreign_id = $request->foreign_id;
+        $sub_category->sub_category_name = $request->sub_category;
+        $sub_category->save();
+
     }
 }

@@ -1,5 +1,7 @@
 @extends('backend.index')
 @section('backend_contains')
+    <meta name="csrf-token" content="{{ csrf_token() }}"> {{-- CSRF Token --}}
+
     <div class="main_content_iner ">
         <div class="container-fluid p-0 sm_padding_15px">
             <div class="row justify-content-center">
@@ -14,21 +16,21 @@
                             </div>
                         </div>
                         <div class="white_card_body">
-
                             <h6 class="card-subtitle mb-2">Category name</h6>
-                            <div class=" mb-0">
-
-                                <form action="{{ route('category.store') }}" class="category_submit" method="post">
+                            <div class="mb-0">
+                                <form action="{{ route('category.store') }}" method="post" class="category_submit"
+                                    data-action="{{ route('category.store') }}">
                                     @csrf
-                                    <input name="category_name" type="text"class="form-control category_name"
-                                        id="inputText" placeholder="Category name">
-                                    <p class=" category_error_message">please wire a category name before inserting</p>
-
-                                    <button type="submit" class="btn_1 full_width text-center category_btn mt-2"
-                                        disabled>submit</button>
+                                    <input name="category_name" type="text" class="form-control category_name"
+                                        placeholder="Category name">
+                                    <p class="category_error_message" style="display: none; color: red;">
+                                        Please enter a category name before inserting
+                                    </p>
+                                    <button type="submit" class="btn_1 full_width text-center category_btn mt-2" disabled>
+                                        Submit
+                                    </button>
                                 </form>
                             </div>
-
                         </div>
                     </div>
                 </div>
@@ -44,25 +46,25 @@
                             </div>
                         </div>
                         <div class="white_card_body">
+                            <h6 class="card-subtitle">Select category</h6>
 
+                            <form action="{{ route('category.subcategory.store') }}" method="post">
+                                @csrf
 
-                            <h6 class="card-subtitle">select category</h6>
-                            <select class="js-example-basic-single w-100" name="state">
-                                <option value="AL">Alabama</option>
-                                ...
-                                <option value="WY">Wyoming</option>
-                            </select>
+                                <select class="js-example-basic-single w-100" name="foreign_id">
+                                    @foreach ($sub_categories as $sub_category)
+                                        <option value="{{ $sub_category->id }}"> {{ $sub_category->category_name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                <h6 class="card-subtitle mt-3">Subcategory name</h6>
+                                <div class="mb-0">
+                                    <input type="text" class="form-control" name="sub_category"
+                                        placeholder="sub category name">
+                                    <button type="submit" class="btn_1 full_width text-center mt-3">Submit</button>
+                                </div>
 
-
-                            <h6 class="card-subtitle mt-3">sub category name</h6>
-                            <div class=" mb-0">
-                                <input type="text" class="form-control" name="inputText" id="inputText"
-                                    placeholder="Text Input">
-
-                                <button class="btn_1 full_width text-center mt-3">submit</button>
-
-                            </div>
-
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -80,44 +82,83 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
-        // In your Javascript (external .js resource or <script> tag)
         $(document).ready(function() {
             $('.js-example-basic-single').select2();
 
+            // Enable/Disable submit button based on input
             $('.category_name').on('keyup input', function() {
                 let inputVal = $(this).val().trim();
-
                 if (inputVal === '') {
-                    $('.category_btn').attr('disabled', true);
-                    $('.category_error_message').css('display', 'block');
+                    $('.category_btn').prop('disabled', true);
+                    $('.category_error_message').show();
                 } else {
-                    $('.category_btn').attr('disabled', false);
-                    $('.category_error_message').css('display', 'none');
+                    $('.category_btn').prop('disabled', false);
+                    $('.category_error_message').hide();
                 }
             });
 
-
-
-
+            // Submit form via AJAX
             $('.category_submit').on('submit', function(e) {
-                // SWEET ALERT 
-                const Toast = Swal.mixin({
-                    toast: true,
-                    position: "top-end",
-                    showConfirmButton: false,
-                    timer: 3000,
-                    timerProgressBar: true,
-                    didOpen: (toast) => {
-                        toast.onmouseenter = Swal.stopTimer;
-                        toast.onmouseleave = Swal.resumeTimer;
+                e.preventDefault();
+
+                let form = $(this);
+                let formData = form.serialize();
+                let actionUrl = form.data('action'); // Get form action URL
+
+                $.ajax({
+                    url: actionUrl,
+                    type: 'POST',
+                    data: formData,
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') // CSRF token
+                    },
+                    beforeSend: function() {
+                        $('.category_btn').prop('disabled', true).text('Submitting...');
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            Swal.fire({
+                                icon: "success",
+                                title: "Success!",
+                                text: response.message,
+                                timer: 3000,
+                                showConfirmButton: false
+                            });
+
+                            form[0].reset(); // Reset form
+                            $('.category_btn').prop('disabled', true).text(
+                                'Submit'); // Disable again
+                            setTimeout(function() {
+                                location.reload(); // Reloads the current page
+                            }, 3000);
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Oops...',
+                                text: 'Failed to insert category!'
+                            });
+
+                            $('.category_btn').prop('disabled', false).text('Submit');
+                            setTimeout(function() {
+                                location.reload(); // Reloads the current page
+                            }, 3000);
+                        }
+                    },
+                    error: function(xhr) {
+                        let errorMessage = "Something went wrong. Please try again.";
+                        if (xhr.responseJSON && xhr.responseJSON.errors) {
+                            errorMessage = Object.values(xhr.responseJSON.errors).join("\n");
+                        }
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: errorMessage
+                        });
+                        $('.category_btn').prop('disabled', false).text('Submit');
+                        form[0].reset();
                     }
                 });
-                Toast.fire({
-                    icon: "success",
-                    title: "Category inserted successfully!"
-                });
-            })
-
+            });
 
         });
     </script>
