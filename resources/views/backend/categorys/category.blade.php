@@ -48,15 +48,18 @@
                         <div class="white_card_body">
                             <h6 class="card-subtitle">Select category</h6>
 
-                            <form action="{{ route('category.subcategory.store') }}" method="post">
+                            <form action="{{ route('category.subcategory.store') }}" method="post"
+                                class="sub_category_submit" data-action="{{ route('category.subcategory.store') }}">
                                 @csrf
 
                                 <select class="js-example-basic-single w-100" name="foreign_id">
-                                    @foreach ($sub_categories as $sub_category)
-                                        <option value="{{ $sub_category->id }}"> {{ $sub_category->category_name }}
-                                        </option>
+                                    <option value="" disabled selected>Please select a category</option>
+                                    <!-- Placeholder -->
+                                    @foreach ($sub_categories as $category)
+                                        <option value="{{ $category->id }}">{{ $category->category_name }}</option>
                                     @endforeach
                                 </select>
+
                                 <h6 class="card-subtitle mt-3">Subcategory name</h6>
                                 <div class="mb-0">
                                     <input type="text" class="form-control" name="sub_category"
@@ -75,6 +78,22 @@
 
 @push('backend_css')
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <style>
+        .select2-container .select2-selection--single {
+            height: 40px !important;
+            padding: 6px 12px !important;
+        }
+
+        .select2-container .select2-selection__placeholder {
+            color: #888 !important;
+            font-weight: bold;
+        }
+
+        .select2-container .select2-selection__arrow {
+            top: 50% !important;
+            transform: translateY(-50%) !important;
+        }
+    </style>
 @endpush
 
 @push('backend_js')
@@ -159,6 +178,68 @@
                     }
                 });
             });
+
+
+            $('.sub_category_submit').on('submit', function(e) {
+                e.preventDefault();
+
+                let form = $(this);
+                let formData = form.serialize();
+                let actionUrl = form.data('action'); // Ensure form has data-action
+
+                $.ajax({
+                    url: actionUrl,
+                    type: 'POST',
+                    data: formData,
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') // CSRF token
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            Swal.fire({
+                                icon: "success",
+                                title: "Success!",
+                                text: response.message,
+                                timer: 3000,
+                                showConfirmButton: false
+                            });        
+
+                            form[0].reset(); // Reset text inputs
+                            $('.js-example-basic-single').val("").trigger(
+                                'change'); // Reset Select2 and show placeholder
+
+                            setTimeout(function() {
+                                location.reload(); // Reload the page
+                            }, 3000);
+
+                            
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Oops...',
+                                text: 'Failed to insert subcategory!'
+                            });
+                        }
+                    },
+                    error: function(xhr) {
+                        let errorMessage = "Something went wrong. Please try again.";
+                        if (xhr.responseJSON && xhr.responseJSON.errors) {
+                            errorMessage = Object.values(xhr.responseJSON.errors).join("\n");
+                        }
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: errorMessage
+                        });
+                        setTimeout(function() {
+                            location.reload(); // Reload the page
+                        }, 3000);
+                    }
+                });
+            });
+
+
+
 
         });
     </script>
