@@ -19,4 +19,5 @@ Route::prefix('admin')->name('category.')->group(function () {
     Route::get('/caregory',[CategoryController::class, 'categoryIndex'])->name('index');
     Route::post('/store',[CategoryController::class, 'categoryStore'])->name('store');
     Route::post('/sub-category-store',[CategoryController::class, 'subCategoryStore'])->name('subcategory.store');
+    Route::get('/all-categories',[CategoryController::class, 'allCategories'])->name('all');
 });

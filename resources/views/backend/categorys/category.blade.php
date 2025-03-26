@@ -172,7 +172,7 @@
                                 icon: "success",
                                 title: "Success!",
                                 text: response.message,
-                                timer: 3000,
+                                timer: 1000,
                                 showConfirmButton: false
                             });
 
@@ -181,7 +181,7 @@
                                 'Submit'); // Disable again
                             setTimeout(function() {
                                 location.reload(); // Reloads the current page
-                            }, 3000);
+                            }, 1000);
                         } else {
                             Swal.fire({
                                 icon: 'error',
@@ -192,7 +192,7 @@
                             $('.category_btn').prop('disabled', false).text('Submit');
                             setTimeout(function() {
                                 location.reload(); // Reloads the current page
-                            }, 3000);
+                            }, 1000);
                         }
                     },
                     error: function(xhr) {
@@ -232,7 +232,7 @@
                                 icon: "success",
                                 title: "Success!",
                                 text: response.message,
-                                timer: 3000,
+                                timer: 1000,
                                 showConfirmButton: false
                             });
 
@@ -242,7 +242,7 @@
 
                             setTimeout(function() {
                                 location.reload(); // Reload the page
-                            }, 3000);
+                            }, 1000);
 
 
                         } else {
@@ -265,7 +265,7 @@
                         });
                         setTimeout(function() {
                             location.reload(); // Reload the page
-                        }, 3000);
+                        }, 1000);
                     }
                 });
             });

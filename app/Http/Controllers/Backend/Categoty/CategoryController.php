@@ -68,4 +68,11 @@ class CategoryController extends Controller
             );
         }
     }
+
+
+    /**ALL CATEGORIES */
+    public function allCategories(){
+        $categories = Category::all();
+        return view('backend.categorys.allCategories');
+    }
 }
