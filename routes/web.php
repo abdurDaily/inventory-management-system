@@ -9,7 +9,7 @@ Route::get('/', function () {
 });
 
 Route::prefix('admin')->name('admin.')->group(function () {
-    Route::get('/home',[HomeController::class, 'index'])->name('index');
+    Route::get('/',[HomeController::class, 'index'])->name('index');
 });
 
 

@@ -291,13 +291,30 @@
             </div>
         </div>
         <!--/ menu  -->
+        <div class="main_content_iner overly_inner">
+
+  
+            <div class="row">
+                <div class="col-12">
+                    <div class="page_title_box d-flex align-items-center justify-content-between">
+                        <div class="page_title_left">
+                            <h3 class="f_s_30 f_w_700 text_white">Dashboard</h3>
+                            @stack('url')
+                        </div>
+                        @stack('head_btn')
+                        
+                    </div>
+                </div>
+            </div>
+
+        
 
         <section id="main_contains">
             <div class="container-fluid">
                 @yield('backend_contains')
             </div>
         </section>
-
+    </div>
 
         <!-- footer part -->
         <div class="footer_part">

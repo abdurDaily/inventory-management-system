@@ -2,9 +2,22 @@
 @section('backend_contains')
     <meta name="csrf-token" content="{{ csrf_token() }}"> {{-- CSRF Token --}}
 
+    @push('head_btn')
+    <a href="#" class="white_btn3">all categories</a>
+        
+    @endpush
     <div class="main_content_iner ">
         <div class="container-fluid p-0 sm_padding_15px">
             <div class="row justify-content-center">
+
+
+                @push('url')
+                    {!! generateBreadcrumbs() !!}
+                @endpush
+
+
+
+
                 {{-- CATEGORY --}}
                 <div class="col-lg-6 h-100">
                     <div class="white_card card_height_100 mb_30">
@@ -92,6 +105,25 @@
         .select2-container .select2-selection__arrow {
             top: 50% !important;
             transform: translateY(-50%) !important;
+        }
+
+        /* Breadcrumb Styling */
+        nav a {
+            text-decoration: none;
+            color: #fff;
+            /* Bootstrap primary blue */
+            font-weight: bold;
+            transition: color 0.3s ease-in-out;
+        }
+
+        nav a:hover {
+            color: #0056b3;
+        }
+
+        nav span {
+            color: #6c757d;
+            /* Gray color for active breadcrumb */
+            font-weight: normal;
         }
     </style>
 @endpush
@@ -202,7 +234,7 @@
                                 text: response.message,
                                 timer: 3000,
                                 showConfirmButton: false
-                            });        
+                            });
 
                             form[0].reset(); // Reset text inputs
                             $('.js-example-basic-single').val("").trigger(
@@ -212,7 +244,7 @@
                                 location.reload(); // Reload the page
                             }, 3000);
 
-                            
+
                         } else {
                             Swal.fire({
                                 icon: 'error',
