@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers\Backend\Categoty;
 
-use App\Http\Controllers\Controller;
 use App\Models\Category;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use Yajra\DataTables\Facades\DataTables;
 
 class CategoryController extends Controller
 {
@@ -12,10 +13,10 @@ class CategoryController extends Controller
     public function categoryIndex()
     {
         $sub_categories = Category::select('id', 'category_name')
-        ->whereNotNull('category_name') // Ensures category_name is not null
-        ->where('category_name', '!=', '') // Ensures it's not an empty string
-        ->get();
-    
+            ->whereNotNull('category_name') // Ensures category_name is not null
+            ->where('category_name', '!=', '') // Ensures it's not an empty string
+            ->get();
+
         return view('backend.categorys.category', compact('sub_categories'));
     }
 
@@ -71,8 +72,49 @@ class CategoryController extends Controller
 
 
     /**ALL CATEGORIES */
-    public function allCategories(){
-        $categories = Category::all();
+    public function allCategories(Request $request)
+    {
+        if ($request->ajax()) {
+            $allCategories = Category::with('subcategories')->whereNull('foreign_id');
+
+            return DataTables::of($allCategories)
+                ->addColumn('subcategories', function ($category) {
+                    if ($category->subcategories->isEmpty()) {
+                        return '<span class="badge bg-secondary">No Subcategories</span>';
+                    }
+
+                    return $category->subcategories->map(function ($sub) {
+                        return '<span class="badge bg-info">' . $sub->sub_category_name . '</span>';
+                    })->implode(' ');
+                })
+                ->addColumn('created_at', function ($category) {
+                    return $category->created_at->format('d M Y, h:i A');
+                })
+                ->addColumn('action', function ($category) {
+                    return '
+                        <a href="#" class="btn btn-sm btn-primary">Edit</a>
+                        <button class="btn btn-sm btn-danger delete-category" data-id="' . $category->id . '">Delete</button>
+                    ';
+                })
+                ->rawColumns(['subcategories', 'action'])
+                ->make(true);
+        }
+
         return view('backend.categorys.allCategories');
     }
+
+
+    /**DELETE CATEGORY */
+    public function deleteCategory($id)
+    {
+        $category = Category::find($id);
+        if ($category) {
+            $category->delete();
+            return response()->json(['success' => 'Category deleted successfully!']);
+        } else {
+            return response()->json(['error' => 'Category not found!'], 404);
+        }
+    }
+
+
 }

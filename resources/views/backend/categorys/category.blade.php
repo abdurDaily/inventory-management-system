@@ -3,7 +3,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}"> {{-- CSRF Token --}}
 
     @push('head_btn')
-    <a href="#" class="white_btn3">all categories</a>
+    <a href="{{ route('category.all') }}" class="white_btn3">all categories</a>
         
     @endpush
     <div class="main_content_iner ">

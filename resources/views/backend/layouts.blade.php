@@ -5,6 +5,7 @@
     <!-- Required meta tags -->
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Sales</title>
 
     <!-- <link rel="icon" href="img/logo.png" type="image/png"> -->
@@ -40,11 +41,12 @@
     <!-- metarial icon css -->
     <link rel="stylesheet" href="{{ asset('assets/vendors/material_icon/material-icons.css') }}" />
 
-    @stack('backend_css')
-
+    
     <!-- menu css  -->
     <link rel="stylesheet" href="{{ asset('assets/css/metisMenu.css') }}">
     <!-- style CSS -->
+    @stack('backend_css')
+   
     <link rel="stylesheet" href="{{ asset('assets/css/style1.css') }}" />
     <link rel="stylesheet" href="{{ asset('assets/css/colors/default.css') }}" id="colorSkinCSS">
 </head>
