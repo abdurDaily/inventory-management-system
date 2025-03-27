@@ -92,7 +92,7 @@ class CategoryController extends Controller
                 })
                 ->addColumn('action', function ($category) {
                     return '
-                        <a href="#" class="btn btn-sm btn-primary">Edit</a>
+                        <a href="'. route('category.category.edit', $category->id).'" class="btn btn-sm btn-primary edit-category">Edit</a>
                         <button class="btn btn-sm btn-danger delete-category" data-id="' . $category->id . '">Delete</button>
                     ';
                 })
@@ -115,6 +115,11 @@ class CategoryController extends Controller
             return response()->json(['error' => 'Category not found!'], 404);
         }
     }
+
+
+    public function editCategory($id){
+    return $id;
+    } 
 
 
 }

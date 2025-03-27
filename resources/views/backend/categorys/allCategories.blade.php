@@ -68,6 +68,25 @@
         </table>
     </div>
 
+
+    <div id="editModal" class="modal" tabindex="-1" style="z-index: 111;">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Modal title</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Modal body text goes here.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 @section('backend_js')
     @push('backend_js')
         {{-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> --}}
@@ -152,6 +171,15 @@
                         });
                     }
                 });
+
+                // Delete button handler
+                $(document).on('click', '.edit-category', function(e) {
+                    e.preventDefault();
+                  $("#editModal").modal('show')
+                });
+
+
+
 
             });
         </script>
